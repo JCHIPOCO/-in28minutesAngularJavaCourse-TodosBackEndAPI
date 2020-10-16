@@ -51,7 +51,11 @@ public class TodoResource {
 
     @GetMapping("/jpa/users/{username}/todos/{id}")
     public EntityModel<Todo> getTodo(@PathVariable String username, @PathVariable Long id) {
-        Todo todo = todoJpaRepository.findById(id).get();
+        //Todo todo = todoJpaRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
+        Todo todo = todoJpaRepository.findByUsername(username).stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new TodoNotFoundException(id));
         return todoModelAssembler.toModel(todo);
     }
 
